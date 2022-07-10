@@ -1,3 +1,11 @@
 1) Para instalar novos modulos:
 - Se digitar import <nome> de uma que não existe previamente, aparece uma lâmpada vermelha em cima, clicando há a opção de instalar package
 - <File> <Settings> <Project Interpreter> <+> <nome> <Install package>
+
+2) Gerar números aleatórios (import random):
+num = random.random()
+- gera numero aleatorio entre 0 e 1
+
+num1 = random.randint(1, 10)
+- gera inteiro entre 1 e 10
+
