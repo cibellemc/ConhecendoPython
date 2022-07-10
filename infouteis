@@ -1,0 +1,3 @@
+1) Para instalar novos modulos:
+- Se digitar import <nome> de uma que não existe previamente, aparece uma lâmpada vermelha em cima, clicando há a opção de instalar package
+- <File> <Settings> <Project Interpreter> <+> <nome> <Install package>
