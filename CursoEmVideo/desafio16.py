@@ -1,7 +1,4 @@
-# biblioteca math
-# import math vai importar tudo
-# from math import sqrt, ceil
-# ceil - arredonda pra cima, floor p/ baixo
+
 
 """""from math import sqrt, ceil
 num = int(input('Digite um número: '))
@@ -12,4 +9,7 @@ from math import trunc
 num = float(input('Número real: '))
 num_truncado = trunc(num)
 print('A parte inteira de {} é {}'.format(num, num_truncado))
+
+''''outro modo de  fazer sem a importação:
+int(num)'''
 

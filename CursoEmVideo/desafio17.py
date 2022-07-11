@@ -1,15 +1,8 @@
-# biblioteca math
-# import math vai importar tudo
-# from math import sqrt, ceil
-# ceil - arredonda pra cima, floor p/ baixo
+# lê o comprimento do cateto oposto e do adjacente e calcula hipo
+from math import hypot
 
-"""""from math import sqrt, ceil
-num = int(input('Digite um número: '))
-raiz = sqrt(num)
-print('A raiz de %d é %d' % (num, ceil(raiz)))"""""
+cateto_oposto = float(input('Cateto oposto: '))
+cateto_adjacente = float(input('Cateto adjacente: '))
+hipotenusa = hypot(cateto_oposto, cateto_adjacente)
 
-from math import trunc
-num = float(input('Número real: '))
-num_truncado = trunc(num)
-print('A parte inteira de {} é {}'.format(num, num_truncado))
-
+print('Hipotenusa:{:.2f}'.format(hipotenusa))

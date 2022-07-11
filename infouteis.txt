@@ -1,0 +1,76 @@
+1) Para instalar novos modulos:
+- Se digitar import <nome> de uma que não existe previamente, aparece uma lâmpada vermelha em cima, clicando há a opção de instalar package
+- <File> <Settings> <Project Interpreter> <+> <nome> <Install package>
+
+2) Gerar números aleatórios (import random):
+
+https://pythonhoje.wordpress.com/2018/01/23/the-journey-begins/
+
+a) random.random()
+- gera numero aleatorio entre 0 e 1
+
+b) random.randint(1, 10)
+- gera inteiro entre 1 e 10
+
+c) random.choice(<lista>)
+a1 = str(input('Primeiro aluno: '))
+a2 = str(input('Segundo aluno: '))
+a3 = str(input('Terceiro aluno: '))
+a4 = str(input('Quarto aluno: '))
+print('Sorteio: {}'. format(random.choice([a1, a2, a3, a4])))
+
+d) random.shuffle(<array>)
+- embaralha
+lista = [n1, n2, n3, n4]
+random.shuffle(lista)
+
+3) Biblioteca math:
+
+import math vai importar tudo
+from math import sqrt, ceil - importa so os modulos pedidos
+
+math.ceil(numero): arredonda pra cima, floor p/ baixo
+math.sqrt(numero): Retorna a raíz quadrada do número.
+math.cos(numero): Retorna o cosseno do número em radiano.
+math.sin(numero): Retorna o seno do número em radiano.
+math.tan(numero): Retorna a tangente do número em radiano.
+math.radians(numero): Converte o angulo ‘numero’ de graus para radiano.
+math.pi: Não é bem uma função, está mais para uma constante com o número pi (3.1415926535897931).
+math.hypot(x, y): Retorna a hipotenusa dos números (catetos) fornecidos.
+
+4) Métodos em listas:
+
+https://www.hashtagtreinamentos.com/listas-no-python
+
+lista_compras = [banana , laranja , maçã]
+
+a) add item
+- .append(): adiciona o item ao final da lista;
+lista_compras.append('carro')
+['banana', 'laranja', 'maçã', 'carro']
+
+- .insert(): insere um item na lista na posição indicada
+lista_compras.insert(1,'carro')
+['banana', ' carro', 'laranja', 'maçã']
+
+b) deletar item
+- del: remove um item da lista baseado na posição indicada
+del lista_compras[2]
+['banana', 'laranja']
+
+- .remove(): remove um item baseado no seu valor e não na sua posição
+(retira apenas a primeira ocorrência e não todas)
+lista_compras.remove('banana')
+['laranja', 'maçã']
+
+- .pop(): remove da lista_compras o último item, mas não o exclui.
+['banana', 'laranja']
+
+4) IF, ELSE, ELIF
+
+5) sin,cos e tg calculam o ângulo em radianos.
+Para converter há outro método chamado math.radians()
+
+seno = math.sin(math.radians(angulo))
+
+>converte pra radianos, pega o convertido e calcula o seno
