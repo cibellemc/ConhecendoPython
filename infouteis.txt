@@ -74,3 +74,49 @@ Para converter há outro método chamado math.radians()
 seno = math.sin(math.radians(angulo))
 
 >converte pra radianos, pega o convertido e calcula o seno
+
+6) Manipulação de String:
+
+a) Fatiamento:
+frase = 'Estou aprendendo Python'
+frase[0:10] = vai pegar de 0 até 9
+frase[0:10:2] = vai pegar de 0 até 9, saltando de 2 em 2
+frase[10:] = pega do 10 ate o ultimo
+frase[:20] = pega do inicio ate 20
+frase[9::3] = pega de 9 ao final saltando de 3 em 3
+
+b) Análise:
+- len(frase): comprimento
+- frase.count("o"): quantas vezes aparece o
+- frase.count("o",0,13): quantas vezes aparece o no intervalo 0:13
+- frase.find('den'): mostra a posição onde se inicia a expressao (no caso posição 12)
+obs: caso não encontre, exibe -1
+- 'Curso' in frase: retorna true ou false, se a expressão foi encontrada
+- frase.replace('Python', 'Android'): substitui python por android
+- frase.upper(): o que nao for maiusculo, troca
+- frase.lower(): o que nao for minusculo, troca
+- frase.capitalized(): so a primeira letra fica maiuscula
+- frase.title(): cada inicio das palavras em maiusculo
+- frase.strip(): remover espaços excedentes no inicio e final
+- frase.rstrip(): remover espaços excedentes na direita (r de right - final)
+- frase.lstrip(): remover espaços excedentes na esquerda (l de left - final)
+
+c) Divisão:
+- frase.split(): quebra nos espaços (cada palavra é novo objeto)
+' '.join(frase): juntar com espaço em branco
+
+7) Imprimir texto longo:
+print("""<texto>""")
+
+8) String é imutavel, só pode ser trocada quando atribuimos o replace a outra variavel
+
+
+
+
+
+
+
+
+
+
+
