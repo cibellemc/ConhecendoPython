@@ -110,7 +110,12 @@ print("""<texto>""")
 
 8) String é imutavel, só pode ser trocada quando atribuimos o replace a outra variavel
 
+9) Condicional simplificada:
+print('carro novo'if tempo <= 3 else 'carro velho')
 
+10) Data atual:
+from datetime import date
+ano = date.today().year
 
 
 
