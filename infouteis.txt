@@ -117,6 +117,10 @@ print('carro novo'if tempo <= 3 else 'carro velho')
 from datetime import date
 ano = date.today().year
 
+11) Inverter string:
+txt = 'texto inverso'
+print(txt[::-1])
+
 
 
 
