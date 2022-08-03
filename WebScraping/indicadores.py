@@ -3,36 +3,49 @@ from time import sleep
 from bs4 import BeautifulSoup
 from selenium.webdriver.support.select import Select
 
-# define navegador e entra na página
 navegador = webdriver.Chrome()
 navegador.get("https://www2.aneel.gov.br/aplicacoes_liferay/srd/indqual/default.cfm")
 
-# se a range começar em 2, mostra no console antes de selecionar
-for c in range(1, 10):
-    # seleciona o estado, para poder habilitar a opção
-    selecao_estado = Select(navegador.find_element('xpath', '//*[@id="frmEstados"]'))
-    selecao_estado.select_by_index(c)
 
-    nome_estado = navegador.find_element('xpath', f'//*[@id="frmEstados"]/option[{c+1}]')
-    print(nome_estado.text)
+def atualiza_html_e_conta_options(tempo_sleep, nome_elemento):
+    sleep(tempo_sleep)
 
-    sleep(1)
-
-    # .page_source pega o conteudo html
     conteudo_web = BeautifulSoup(navegador.page_source, 'html.parser')
+    lista_E = conteudo_web.find('select', {'id': f'frm{nome_elemento}'})
 
-    # ao verificar o tamanho da lista_municipios dava um valor dobrado, provavelmente contando inicio e
-    # fim de tags, entao dividi por 2, peguei a parte inteira. DF = 5/2 = int(2,5) = 2
-    lista_municipios = conteudo_web.find('select', {'id': 'frmMunicipios'})
+    qtd_E = int(len(lista_E) / 2)
+    return qtd_E
 
-    qtd_municipios = int(len(lista_municipios)/2)
+
+def seleciona_e_mostra_options(nome_elemento, nome_contador):
+    selecao = Select(navegador.find_element(f'xpath', f'//*[@id="frm{nome_elemento}"]'))
+    selecao.select_by_index(nome_contador)
+
+    nomeE = navegador.find_element('xpath', f'//*[@id="frm{nome_elemento}"]/option[{nome_contador + 1}]')
+    print(nomeE.text)
+
+
+for e in range(1, 28):
+    seleciona_e_mostra_options('Estados', e)
+
+    qtd_municipios = atualiza_html_e_conta_options(2.5, 'Municipios')
     print(qtd_municipios)
 
     for m in range(1, qtd_municipios):
-        selecao_municipio = Select(navegador.find_element('xpath', '//*[@id="frmMunicipios"]'))
-        selecao_municipio.select_by_index(m)
+        seleciona_e_mostra_options('Municipios', m)
 
-        nome_municipio = navegador.find_element('xpath', f'//*[@id="frmMunicipios"]/option[{m+1}]')
-        print(nome_municipio.text)
+        qtd_anos = atualiza_html_e_conta_options(1, 'Anos')
+        print(qtd_anos)
+
+        for a in range(1, qtd_anos):
+            seleciona_e_mostra_options('Anos', a)
+
+            qtd_conjuntos = atualiza_html_e_conta_options(1, 'Conjuntos')
+            print(qtd_conjuntos)
+
+            for c in range(1, qtd_conjuntos):
+                seleciona_e_mostra_options('Conjuntos', c)
+
+    print('\n')
 
 navegador.quit()
