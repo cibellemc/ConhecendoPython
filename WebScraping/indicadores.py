@@ -7,7 +7,7 @@ from selenium.webdriver.support.select import Select
 navegador = webdriver.Chrome()
 navegador.get("https://www2.aneel.gov.br/aplicacoes_liferay/srd/indqual/default.cfm")
 
-df = pd.DataFrame()
+estmunanoconj = []
 
 
 def atualiza_html_e_conta_options(tempo_sleep, nome_elemento):
@@ -52,7 +52,7 @@ for e in range(1, 28):
         for a in range(1, qtd_anos):
             seleciona_elemento('Anos', a)
 
-            lista_anos = cria_lista('Anos')
+            # lista_anos = cria_lista('Anos')
             # print(lista_anos[a + 1])
 
             qtd_conjuntos = atualiza_html_e_conta_options(1.5, 'Conjuntos')
@@ -61,10 +61,11 @@ for e in range(1, 28):
             for c in range(1, qtd_conjuntos):
                 seleciona_elemento('Conjuntos', c)
 
-                lista_conjuntos = cria_lista('Conjuntos')
+                # lista_conjuntos = cria_lista('Conjuntos')
                 # print(lista_conjuntos[c + 1])
-
-                df = ({'Estado': lista_estados[e + 1], 'Municipio': lista_municipios[m + 1].strip(), 'Ano': lista_anos[a + 1], 'Conjunto': lista_conjuntos[c + 1]})
-                print(df)
+                sleep(2)
+                web = BeautifulSoup(navegador.page_source, 'html.parser')
+                tables = web.find_all('table', {'width': '520px'})
+                print(tables)
 
 navegador.quit()
