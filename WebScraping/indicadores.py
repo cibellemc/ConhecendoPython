@@ -8,8 +8,12 @@ navegador = webdriver.Chrome()
 navegador.get("https://www2.aneel.gov.br/aplicacoes_liferay/srd/indqual/default.cfm")
 
 estmunanoconj = []
+<<<<<<< HEAD
 df_urb = pd.DataFrame(columns=['Conjunto', 'DEC', 'FEC', 'DIC Anual', 'DIC Mensal',
                                'DIC Trim.', 'FIC Anual', 'FIC Mensal', 'FIC Trim.', 'DMIC', 'DICRI'])
+=======
+
+>>>>>>> a8e904bba687e9a17228714d2b4d1d6f93a178ae
 
 def atualiza_html_e_conta_options(tempo_sleep, nome_elemento):
     sleep(tempo_sleep)
@@ -61,6 +65,7 @@ for e in range(1, 2):
             seleciona_elemento('Anos', a)
             lista_anos = cria_lista('Anos')
             qtd_conjuntos = atualiza_html_e_conta_options(1.5, 'Conjuntos')
+<<<<<<< HEAD
 
             for c in range(1, 2):
                 seleciona_elemento('Conjuntos', c)
@@ -73,4 +78,17 @@ for e in range(1, 2):
                 print(df_urb)
 """  df2 = tables(2)
 print(df2)"""
+=======
+
+            for c in range(1, 2):
+                seleciona_elemento('Conjuntos', c)
+
+                df1 = tables(1)
+                print(df1)
+
+                df2 = tables(2)
+                print(df2)
+
+
+>>>>>>> a8e904bba687e9a17228714d2b4d1d6f93a178ae
 navegador.quit()
