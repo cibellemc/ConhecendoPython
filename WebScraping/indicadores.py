@@ -8,10 +8,7 @@ navegador = webdriver.Chrome()
 navegador.get("https://www2.aneel.gov.br/aplicacoes_liferay/srd/indqual/default.cfm")
 
 estmunanoconj = []
-
-
-df_urb = pd.DataFrame(columns=['Conjunto', 'DEC', 'FEC', 'DIC Anual', 'DIC Mensal',
-                               'DIC Trim.', 'FIC Anual', 'FIC Mensal', 'FIC Trim.', 'DMIC', 'DICRI'])
+df_urb = pd.DataFrame()
 
 
 def atualiza_html_e_conta_options(tempo_sleep, nome_elemento):
@@ -67,13 +64,12 @@ for e in range(1, 2):
 
             for c in range(1, 2):
                 seleciona_elemento('Conjuntos', c)
-                lista_conj = cria_lista('Conjuntos')
-
                 df1 = tables(1)
-                print(df1)
                 df_urb = df_urb.append(df1, ignore_index=True)
 
-                print(df_urb)
+df_urb.columns = ['Conjunto', 'DEC', 'FEC', 'DIC A', 'DIC M', 'DIC T', 'FIC A', 'FIC M', 'FIC T', 'DMCI', 'DICRI']
+print(df_urb)
+df_urb.to_excel("output.xlsx", sheet_name='Baixa Tensão Urbana')
 
 
 navegador.quit()
