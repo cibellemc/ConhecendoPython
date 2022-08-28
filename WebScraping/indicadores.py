@@ -67,7 +67,11 @@ for e in range(1, 2):
                 df1 = tables(1)
                 df_urb = df_urb.append(df1, ignore_index=True)
 
-df_urb.columns = ['Conjunto', 'DEC', 'FEC', 'DIC A', 'DIC M', 'DIC T', 'FIC A', 'FIC M', 'FIC T', 'DMCI', 'DICRI']
+                df_urb.insert(loc=0, column="Estado", value=lista_estados[e + 1])
+                df_urb.insert(loc=1, column="Município", value=lista_municipios[m + 1].split())
+                df_urb.insert(loc=2, column="Ano", value=lista_anos[a + 1])
+
+df_urb.columns = ['Estado', 'Município', 'Ano', 'Conjunto', 'DEC', 'FEC', 'DIC A', 'DIC M', 'DIC T', 'FIC A', 'FIC M', 'FIC T', 'DMCI', 'DICRI']
 print(df_urb)
 df_urb.to_excel("output.xlsx", sheet_name='Baixa Tensão Urbana')
 
