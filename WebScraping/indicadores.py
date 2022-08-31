@@ -7,7 +7,10 @@ from selenium.webdriver.support.select import Select
 navegador = webdriver.Chrome()
 navegador.get("https://www2.aneel.gov.br/aplicacoes_liferay/srd/indqual/default.cfm")
 
-estmunanoconj = []
+estados = []
+municipios = []
+anos = []
+conjuntos = []
 df_urb = pd.DataFrame()
 
 
@@ -37,9 +40,9 @@ def tables(indice_table):
     tabelas = web.find('div', {'id': 'resposta'}).find_all('tr', {'class': 'res'})
 
     if indice_table == 1:
-        tabela1 = tabelas[0].text.strip().split("\n")
+        tabela1 = tabelas[0].text.strip().upper().split("\n")
     else:
-        tabela1 = tabelas[1].text.strip().split("\n")
+        tabela1 = tabelas[1].text.strip().upper().split("\n")
 
     df1 = pd.DataFrame(tabela1).replace(',', '.', regex=True).transpose()
     sleep(2)
@@ -52,28 +55,36 @@ for e in range(1, 2):
     lista_estados = cria_lista('Estados')
     qtd_municipios = atualiza_html_e_conta_options(2.5, 'Municipios')
 
-    for m in range(1, 2):
+    for m in range(1, 3):
         seleciona_elemento('Municipios', m)
         lista_municipios = cria_lista('Municipios')
         qtd_anos = atualiza_html_e_conta_options(1, 'Anos')
 
-        for a in range(1, 2):
+        for a in range(1, 3):
             seleciona_elemento('Anos', a)
             lista_anos = cria_lista('Anos')
             qtd_conjuntos = atualiza_html_e_conta_options(1.5, 'Conjuntos')
 
-            for c in range(1, 2):
+            for c in range(1, qtd_conjuntos):
                 seleciona_elemento('Conjuntos', c)
+                lista_conjuntos = cria_lista('Conjuntos')
                 df1 = tables(1)
                 df_urb = df_urb.append(df1, ignore_index=True)
 
-                df_urb.insert(loc=0, column="Estado", value=lista_estados[e + 1])
-                df_urb.insert(loc=1, column="Município", value=lista_municipios[m + 1].split())
-                df_urb.insert(loc=2, column="Ano", value=lista_anos[a + 1])
+                estados.append(lista_estados[e + 1])
+                municipios.append(lista_municipios[m + 1].strip())
+                anos.append(lista_anos[a + 1])
+                conjuntos.append(lista_conjuntos[c + 1])
 
-df_urb.columns = ['Estado', 'Município', 'Ano', 'Conjunto', 'DEC', 'FEC', 'DIC A', 'DIC M', 'DIC T', 'FIC A', 'FIC M', 'FIC T', 'DMCI', 'DICRI']
+df_urb.columns = ['Conjunto', 'DEC', 'FEC', 'DIC A', 'DIC M', 'DIC T', 'FIC A', 'FIC M', 'FIC T', 'DMCI', 'DICRI']
+zip = list(zip(estados, municipios, anos, conjuntos))
+df_estmunanocon = pd.DataFrame(zip, columns=['Estado', 'Município', 'Ano', 'Conjunto'])
 print(df_urb)
-df_urb.to_excel("output.xlsx", sheet_name='Baixa Tensão Urbana')
+print(df_estmunanocon)
+m = pd.merge(df_estmunanocon, df_urb, how='inner', on='Conjunto').drop_duplicates()
+print(m)
+"""m = pd.merge(df_estmunanocon, df_urb, how='left', on='Conjunto')
+df_urb.to_excel("output.xlsx", sheet_name='Baixa Tensão Urbana')"""
 
 
 navegador.quit()
