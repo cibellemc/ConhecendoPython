@@ -29,6 +29,7 @@ def seleciona_elemento(nome_elemento, nome_contador):
 
 
 def cria_lista(nome_elemento):
+    sleep(2)
     conteudo_web = BeautifulSoup(navegador.page_source, 'html.parser')
     find_el = conteudo_web.find("select", {"id": f"frm{nome_elemento}"}).get_text()
     return find_el.split('\n')
@@ -79,9 +80,9 @@ for e in range(1, 2):
 df_urb.columns = ['Conjunto', 'DEC', 'FEC', 'DIC A', 'DIC M', 'DIC T', 'FIC A', 'FIC M', 'FIC T', 'DMCI', 'DICRI']
 zip = list(zip(estados, municipios, anos, conjuntos))
 df_estmunanocon = pd.DataFrame(zip, columns=['Estado', 'Município', 'Ano', 'Conjunto'])
-print(df_urb)
-print(df_estmunanocon)
-m = pd.merge(df_estmunanocon, df_urb, how='inner', on='Conjunto').drop_duplicates()
+"""print(df_urb)
+print(df_estmunanocon)"""
+m = pd.merge(df_estmunanocon, df_urb, right_index=True, left_index=True, how='outer')
 print(m)
 """m = pd.merge(df_estmunanocon, df_urb, how='left', on='Conjunto')
 df_urb.to_excel("output.xlsx", sheet_name='Baixa Tensão Urbana')"""
