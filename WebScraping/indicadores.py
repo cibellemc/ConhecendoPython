@@ -10,7 +10,6 @@ navegador.get("https://www2.aneel.gov.br/aplicacoes_liferay/srd/indqual/default.
 estados = []
 municipios = []
 anos = []
-conjuntos = []
 df_urb = pd.DataFrame()
 
 
@@ -75,17 +74,15 @@ for e in range(1, 2):
                 estados.append(lista_estados[e + 1])
                 municipios.append(lista_municipios[m + 1].strip())
                 anos.append(lista_anos[a + 1])
-                conjuntos.append(lista_conjuntos[c + 1])
 
 df_urb.columns = ['Conjunto', 'DEC', 'FEC', 'DIC A', 'DIC M', 'DIC T', 'FIC A', 'FIC M', 'FIC T', 'DMCI', 'DICRI']
-zip = list(zip(estados, municipios, anos, conjuntos))
-df_estmunanocon = pd.DataFrame(zip, columns=['Estado', 'Município', 'Ano', 'Conjunto'])
+zip = list(zip(estados, municipios, anos))
+df_estmunanocon = pd.DataFrame(zip, columns=['Estado', 'Município', 'Ano'])
 """print(df_urb)
 print(df_estmunanocon)"""
 m = pd.merge(df_estmunanocon, df_urb, right_index=True, left_index=True, how='outer')
 print(m)
 """m = pd.merge(df_estmunanocon, df_urb, how='left', on='Conjunto')
 df_urb.to_excel("output.xlsx", sheet_name='Baixa Tensão Urbana')"""
-
 
 navegador.quit()
