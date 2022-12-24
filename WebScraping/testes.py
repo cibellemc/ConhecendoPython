@@ -3,12 +3,16 @@ import ibge.localidades
 import pandas as pd
 from bs4 import BeautifulSoup
 from selenium.webdriver.support.select import Select
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support import expected_conditions as ec
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 
 # abre o navegador navegador
 navegador = webdriver.Chrome()
 navegador.get("https://www2.aneel.gov.br/aplicacoes_liferay/srd/indqual/default.cfm")
+
+wait = WebDriverWait(navegador, 10)
 
 # pega os estados da api do ibge é coloca em ordem alfabética
 lista_estados = sorted(ibge.localidades.Estados().getNome())
@@ -25,6 +29,7 @@ lista_anos = [2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 
 
 dados_tabela = []
 linhas_tabela = []
+
 
 def seleciona_elementos(nome_unidade, nome_procurado):
     # o select só funciona com tag select, entaão seleciona a tag que contém as opcões de estados/municípios
@@ -54,6 +59,26 @@ def cria_lista(nome_elemento):
     return find_el.split('\n')
 
 
+# caso índice 0 -> bt urb, caso 1 -> bt nao urb
+def tables(indice_table):
+    # espera até as tabelas estarem na tela
+    locator = (By.XPATH, '//*[@id="resposta"]/table[2]')
+    wait.until(ec.presence_of_element_located(locator))
+
+    # capta o conteúdo e encontra as option de resposta
+    web = BeautifulSoup(navegador.page_source, 'html.parser')
+    tabelas = web.find('div', {'id': 'resposta'}).find_all('tr', {'class': 'res'})
+
+    # transforma pra texto em caps lock
+    tabela = tabelas[indice_table].text.strip().upper().split("\n")
+
+    # troca , por ponto e bota na horizontal
+    df = pd.DataFrame(tabela).replace(',', '.', regex=True).transpose()
+    sleep(1)
+
+    return df
+
+
 for e in range(0, 1):
     try:
         seleciona_elementos("Estados", lista_estados[e])
@@ -71,10 +96,12 @@ for e in range(0, 1):
                 lista_conjuntos = cria_lista('Conjuntos')
                 seleciona_elementos('Conjuntos', lista_conjuntos[c])
                 linhas_tabela.append([lista_estados[e], lista_capitais[e], lista_anos[a], lista_conjuntos[c]])
+
     except:
         print("Erro")
         pass
 
+tables(0)
 df_urb = pd.DataFrame(linhas_tabela)
 print(df_urb)
 df_urb.to_excel("testeconj.xlsx", sheet_name='Baixa Tensão Urbana')
