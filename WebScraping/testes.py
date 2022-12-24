@@ -43,6 +43,7 @@ def atualiza_html_e_conta_options(tempo_sleep, nome_elemento):
     conteudo_web = BeautifulSoup(navegador.page_source, 'html.parser')
     lista_E = conteudo_web.find('select', {'id': f'frm{nome_elemento}'})
 
+    # conta abertura e fechamento de <option>, ficando valor dobrado
     return int(len(lista_E) / 2)
 
 
@@ -60,7 +61,7 @@ for e in range(0, 1):
         seleciona_elementos("Municipios", lista_capitais[e])
         sleep(2)
 
-        for a in range(0, 14):
+        for a in range(0, 4):
             seleciona_elementos("Anos", lista_anos[a])
             qtd_conjuntos = atualiza_html_e_conta_options(1.5, 'Conjuntos')
             sleep(1)
