@@ -1,5 +1,7 @@
 from time import sleep
 import ibge.localidades
+import pandas as pd
+from bs4 import BeautifulSoup
 from selenium.webdriver.support.select import Select
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -32,14 +34,37 @@ def seleciona_elementos(nome_unidade, nome_procurado):
     selecao.select_by_visible_text(busca.text)
 
 
+def atualiza_html_e_conta_options(tempo_sleep, nome_elemento):
+    sleep(tempo_sleep)
+
+    conteudo_web = BeautifulSoup(navegador.page_source, 'html.parser')
+    lista_E = conteudo_web.find('select', {'id': f'frm{nome_elemento}'})
+
+    return int(len(lista_E) / 2)
+
+
+def cria_lista(nome_elemento):
+    # sleep(2)
+    conteudo_web = BeautifulSoup(navegador.page_source, 'html.parser')
+    find_el = conteudo_web.find("select", {"id": f"frm{nome_elemento}"}).get_text()
+    return find_el.split('\n')
+
+
 for e in range(0, 27):
     try:
         seleciona_elementos("Estados", lista_estados[e])
         sleep(1)
         seleciona_elementos("Municipios", lista_capitais[e])
-        sleep(1)
+        sleep(2)
+
         for a in range(0, 14):
             seleciona_elementos("Anos", lista_anos[a])
+            qtd_conjuntos = atualiza_html_e_conta_options(1.5, 'Conjuntos')
+
+            for c in range(1, qtd_conjuntos):
+                lista_conjuntos = cria_lista('Conjuntos')
+                seleciona_elementos('Conjuntos', lista_conjuntos[c])
+
     except:
         print(f"Rápido demais - {lista_estados[e]}, {lista_capitais[e]}, {lista_anos[a]}")
         pass
