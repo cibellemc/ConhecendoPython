@@ -6,6 +6,7 @@ from selenium.webdriver.support.select import Select
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 
+# abre o navegador navegador
 navegador = webdriver.Chrome()
 navegador.get("https://www2.aneel.gov.br/aplicacoes_liferay/srd/indqual/default.cfm")
 
@@ -22,6 +23,8 @@ lista_capitais = ["RIO BRANCO", "MACEIÓ", "MACAPÁ", "MANAUS", "SALVADOR", 'FOR
 
 lista_anos = [2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023]
 
+dados_tabela = []
+linhas_tabela = []
 
 def seleciona_elementos(nome_unidade, nome_procurado):
     # o select só funciona com tag select, entaão seleciona a tag que contém as opcões de estados/municípios
@@ -50,7 +53,7 @@ def cria_lista(nome_elemento):
     return find_el.split('\n')
 
 
-for e in range(0, 27):
+for e in range(0, 1):
     try:
         seleciona_elementos("Estados", lista_estados[e])
         sleep(1)
@@ -60,11 +63,18 @@ for e in range(0, 27):
         for a in range(0, 14):
             seleciona_elementos("Anos", lista_anos[a])
             qtd_conjuntos = atualiza_html_e_conta_options(1.5, 'Conjuntos')
+            sleep(1)
 
-            for c in range(1, qtd_conjuntos):
+            # ['', 'Selecione um Conjunto Elétrico', 'SÃO FRANCISCO', 'TANGARÁ', 'TAQUARI', '']
+            for c in range(2, qtd_conjuntos + 1):
                 lista_conjuntos = cria_lista('Conjuntos')
                 seleciona_elementos('Conjuntos', lista_conjuntos[c])
-
+                linhas_tabela.append([lista_estados[e], lista_capitais[e], lista_anos[a], lista_conjuntos[c]])
     except:
-        print(f"Rápido demais - {lista_estados[e]}, {lista_capitais[e]}, {lista_anos[a]}")
+        print("Erro")
         pass
+
+df_urb = pd.DataFrame(linhas_tabela)
+print(df_urb)
+df_urb.to_excel("testeconj.xlsx", sheet_name='Baixa Tensão Urbana')
+navegador.quit()
