@@ -116,7 +116,7 @@ df_rur.columns = ['Conjunto', 'DEC', 'FEC', 'DIC A', 'DIC M', 'DIC T', 'FIC A', 
 
 df_estmunanocon = pd.DataFrame(linhas_tabela, columns=['Estado', 'Município', 'Ano'])
 
-m = pd.merge(df_estmunanocon, df_urb, right_index=True, left_index=True, how='outer')
+m = pd.merge(df_estmunanocon, df_urb.astype(float), right_index=True, left_index=True, how='outer')
 
-m.to_excel("testeconj.xlsx", sheet_name='Baixa Tensão Urbana')
+m.to_excel("testeconj.xlsx", sheet_name='Baixa Tensão Urbana', index=False)
 navegador.quit()
