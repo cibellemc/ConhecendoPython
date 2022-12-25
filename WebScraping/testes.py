@@ -30,6 +30,9 @@ lista_anos = [2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 
 dados_tabela = []
 linhas_tabela = []
 
+df_urb = pd.DataFrame()
+df_rur = pd.DataFrame()
+
 
 def seleciona_elementos(nome_unidade, nome_procurado):
     # o select só funciona com tag select, entaão seleciona a tag que contém as opcões de estados/municípios
@@ -95,14 +98,25 @@ for e in range(0, 1):
             for c in range(2, qtd_conjuntos + 1):
                 lista_conjuntos = cria_lista('Conjuntos')
                 seleciona_elementos('Conjuntos', lista_conjuntos[c])
-                linhas_tabela.append([lista_estados[e], lista_capitais[e], lista_anos[a], lista_conjuntos[c]])
+
+                df1 = tables(0)
+                df2 = tables(1)
+
+                df_urb = df_urb.append(df1, ignore_index=True)
+                df_rur = df_rur.append(df2, ignore_index=True)
+
+                linhas_tabela.append([lista_estados[e], lista_capitais[e], lista_anos[a]])
 
     except:
         print("Erro")
         pass
 
-tables(0)
-df_urb = pd.DataFrame(linhas_tabela)
-print(df_urb)
-df_urb.to_excel("testeconj.xlsx", sheet_name='Baixa Tensão Urbana')
+df_urb.columns = ['Conjunto', 'DEC', 'FEC', 'DIC A', 'DIC M', 'DIC T', 'FIC A', 'FIC M', 'FIC T', 'DMCI', 'DICRI']
+df_rur.columns = ['Conjunto', 'DEC', 'FEC', 'DIC A', 'DIC M', 'DIC T', 'FIC A', 'FIC M', 'FIC T', 'DMCI', 'DICRI']
+
+df_estmunanocon = pd.DataFrame(linhas_tabela, columns=['Estado', 'Município', 'Ano'])
+
+m = pd.merge(df_estmunanocon, df_urb, right_index=True, left_index=True, how='outer')
+
+m.to_excel("testeconj.xlsx", sheet_name='Baixa Tensão Urbana')
 navegador.quit()
