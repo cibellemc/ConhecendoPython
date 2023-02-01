@@ -1,0 +1,28 @@
+2023-01-31 22:53:01.007143
+RMD;CEB;2022;tentativa 2;ok
+RMD;ENEL GO;2022;tentativa 2;ok
+RMD;EMS;2022;tentativa 2;ok
+RMD;EMT;2022;tentativa 1;ok
+RMD;CELPE;2022;tentativa 2;ok
+RMD;EQUATORIAL MA;2022;tentativa 2;ok
+RMD;COELBA;2022;tentativa 2;ok
+RMD;COSERN;2022;tentativa 2;ok
+RMD;ENEL CE;2022;tentativa 1;ok
+RMD;EPB;2022;tentativa 1;ok
+RMD;EQUATORIAL AL;2022;tentativa 2;ok
+RMD;EQUATORIAL PI;2022;tentativa 1;ok
+RMD;ESE;2022;tentativa 2;ok
+RMD;AME;2022;tentativa 1;ok
+RMD;BOA VISTA;2022;tentativa 2;ok
+RMD;CEA;2022;tentativa 2;ok
+RMD;ERO;2022;tentativa 2;ok
+RMD;EAC;2022;tentativa 1;ok
+RMD;EQUATORIAL PA;2022;tentativa 1;ok
+RMD;ETO;2022;tentativa 2;ok
+RMD;CEMIG;2022;tentativa 1;ok
+RMD;EDP ES;2022;tentativa 1;ok
+RMD;ENEL SP;2022;tentativa 1;ok
+RMD;LIGHT;2022;tentativa 2;ok
+RMD;CEEE;2022;tentativa 1;ok
+RMD;CELESC;2022;tentativa 1;ok
+RMD;COPEL;2022;tentativa 2;ok
