@@ -18,7 +18,10 @@ wait = WebDriverWait(navegador, 10)
 
 # pega os estados da api do ibge é coloca em ordem alfabética
 lista_estados = sorted(ibge.localidades.Estados().getNome())
-# Acre', 'Alagoas', 'Amapá', 'Amazonas', 'Bahia', 'Ceará', 'Distrito Federal', 'Espírito Santo', 'Goiás', 'Maranhão', 'Mato Grosso', 'Mato Grosso do Sul', 'Minas Gerais', 'Paraná', 'Paraíba', 'Pará', 'Pernambuco', 'Piauí', 'Rio Grande do Norte', 'Rio Grande do Sul', 'Rio de Janeiro', 'Rondônia', 'Roraima', 'Santa Catarina', 'Sergipe', 'São Paulo', 'Tocantins'
+# Acre', 'Alagoas', 'Amapá', 'Amazonas', 'Bahia', 'Ceará', 'Distrito Federal', 'Espírito Santo', 'Goiás', 'Maranhão',
+# 'Mato Grosso', 'Mato Grosso do Sul', 'Minas Gerais', 'Paraná', 'Paraíba', 'Pará', 'Pernambuco', 'Piauí',
+# 'Rio Grande do Norte', 'Rio Grande do Sul', 'Rio de Janeiro', 'Rondônia', 'Roraima', 'Santa Catarina', 'Sergipe',
+# 'São Paulo', 'Tocantins'
 
 # coloca o vetor em upper case
 lista_estados = list(map(lambda x: x.upper(), lista_estados))
@@ -69,7 +72,7 @@ def cria_lista(nome_elemento):
 
 # função p/ transformar em tabela
 def tabela(indice):
-    sleep(0.5)
+    sleep(1)
     element = navegador.find_element(By.XPATH, '//*[@id="resposta"]/table[{}]'.format(indice))
 
     html_element = element.get_attribute('outerHTML')
@@ -91,7 +94,7 @@ for e in range(0, 27):
         seleciona_elementos("Municipios", lista_capitais[e])
         sleep(1)
 
-        seleciona_elementos("Anos", 2022)
+        seleciona_elementos("Anos", 2023)
         qtd_conjuntos = atualiza_html_e_conta_options(0.5, 'Conjuntos')
         sleep(1)
 
@@ -106,20 +109,17 @@ for e in range(0, 27):
                     lista_conjuntos = cria_lista('Conjuntos')
                     seleciona_elementos('Conjuntos', lista_conjuntos[c])
 
-                    df1 = tabela(0)
-                    df2 = tabela(1)
-
-                    df_urb = tabela_urb.append(df1, ignore_index=True)
-                    df_rur = tabela_rur.append(df2, ignore_index=True)
+                    tabela_urb = tabela_urb.append(tabela(1))
+                    tabela_rur = tabela_urb.append(tabela(2))
 
                     log.write(str(f'OK: tentativa {tentativa} - {lista_conjuntos[c]}/{lista_estados[e]}'))
                     print(f'OK: tentativa {tentativa} - {lista_conjuntos[c]}/{lista_estados[e]}')
                     break
 
             except:
+                print(str(f'Erro: {lista_capitais[e]}/{lista_estados[e]}'))
+                log.write(str(f'Erro: {lista_capitais[e]}/{lista_estados[e]}'))
                 if tentativa == 4:
-                    print(str(f'Erro: {lista_capitais[e]}/{lista_estados[e]}'))
-                    log.write(str(f'Erro: {lista_capitais[e]}/{lista_estados[e]}'))
                     pass
 
     except WebDriverException:
