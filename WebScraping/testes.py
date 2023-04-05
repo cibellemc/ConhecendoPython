@@ -23,10 +23,15 @@ lista_estados = sorted(ibge.localidades.Estados().getNome())
 # coloca o vetor em upper case
 lista_estados = list(map(lambda x: x.upper(), lista_estados))
 
+# lista_capitais = ["RIO BRANCO", "MACEIÓ", "MACAPÁ", "MANAUS", "SALVADOR", 'FORTALEZA', "BRASÍLIA", "VITÓRIA", 'GOIÂNIA',
+                  #"SÃO LUÍS", "CUIABÁ", 'CAMPO GRANDE', 'BELO HORIZONTE', 'BELÉM', 'JOÃO PESSOA', 'CURITIBA', 'RECIFE',
+                  #'TERESINA', 'RIO DE JANEIRO', 'NATAL', 'PORTO ALEGRE', 'PORTO VELHO', 'BOA VISTA', 'FLORIANÓPOLIS',
+                  #'SÃO PAULO', 'ARACAJU', 'PALMAS']
+
 lista_capitais = ["RIO BRANCO", "MACEIÓ", "MACAPÁ", "MANAUS", "SALVADOR", 'FORTALEZA', "BRASÍLIA", "VITÓRIA", 'GOIÂNIA',
-                  "SÃO LUÍS", "CUIABÁ", 'CAMPO GRANDE', 'BELO HORIZONTE', 'BELÉM', 'JOÃO PESSOA', 'CURITIBA', 'RECIFE',
-                  'TERESINA', 'RIO DE JANEIRO', 'NATAL', 'PORTO ALEGRE', 'PORTO VELHO', 'BOA VISTA', 'FLORIANÓPOLIS',
-                  'SÃO PAULO', 'ARACAJU', 'PALMAS']
+                  "SÃO LUÍS", "CUIABÁ", 'CAMPO GRANDE', 'BELO HORIZONTE', 'CURITIBA', 'JOÃO PESSOA', 'BELÉM','RECIFE',
+                  'TERESINA', 'NATAL','PORTO ALEGRE', 'RIO DE JANEIRO', 'PORTO VELHO', 'BOA VISTA', 'FLORIANÓPOLIS',
+                  'ARACAJU','SÃO PAULO', 'PALMAS']
 
 # lista_anos = [2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023]
 # lista_anos = [2022, 2023]
@@ -104,8 +109,34 @@ def gerar_id():
     ids_gerados.append(id_aleatorio)
     return id_aleatorio
 
+""""
+PRA RJ DAR CERTO 
+AUMENTA TEMPO DE SELECT P 1.5
+for e in range(20, 21):
+    # só vai procurar um estado, um município e um ano, dentro disso, vários conjuntos
+    #seleciona_elementos("Estados", lista_estados[e])
+    selecao = Select(navegador.find_element(By.XPATH, f'//*[@id="frmEstados"]'))
 
-for e in range(0, 27):
+    # procura na página a option com o nome do estado/município
+    # busca = navegador.find_element(By.XPATH, f'//option[contains(text(),"RJ")]')
+
+    # seleciona (dentro da tag select) onde o texto é o encontrado na busca
+    selecao.select_by_value("RJ")
+    sleep(1)
+
+    try:
+
+        a = Select(navegador.find_element(By.XPATH, f'//*[@id="frmMunicipios"]'))
+
+        # procura na página a option com o nome do estado/município
+        # busca = navegador.find_element(By.XPATH, f'//option[contains(text(),"RJ")]')
+
+        # seleciona (dentro da tag select) onde o texto é o encontrado na busca
+        a.select_by_value("3304557")
+        sleep(1)
+"""
+
+for e in range(23, 24):
     # só vai procurar um estado, um município e um ano, dentro disso, vários conjuntos
     seleciona_elementos("Estados", lista_estados[e])
     sleep(1)
@@ -146,7 +177,7 @@ for e in range(0, 27):
                     log.write(str(f'Erro: {lista_capitais[e]}/{lista_estados[e]}'))
                     pass
 
-    except WebDriverException:
+    except:
         print(str(f'Erro: {lista_estados[e]}\n'))
         log.write(str(f'Erro: tentativa {lista_estados[e]}\n'))
         pass
