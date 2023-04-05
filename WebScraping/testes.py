@@ -1,8 +1,10 @@
+from datetime import date
 from time import sleep
 import time
 import ibge.localidades
 import pandas as pd
 from bs4 import BeautifulSoup
+from selenium.common import WebDriverException
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium import webdriver
@@ -21,11 +23,20 @@ lista_estados = sorted(ibge.localidades.Estados().getNome())
 # coloca o vetor em upper case
 lista_estados = list(map(lambda x: x.upper(), lista_estados))
 
-lista_capitais = ["RIO BRANCO", "MACEIÓ", "MACAPÁ", "MANAUS", "SALVADOR", 'FORTALEZA', "BRASÍLIA", "VITÓRIA", 'GOIÂNIA', "SÃO LUÍS", "CUIABÁ", 'CAMPO GRANDE', 'BELO HORIZONTE', 'CURITIBA','JOÃO PESSOA', 'BELÉM','RECIFE','TERESINA',  'NATAL', 'PORTO ALEGRE', 'RIO DE JANEIRO',  'PORTO VELHO', 'BOA VISTA', 'FLORIANÓPOLIS','ARACAJU','SÃO PAULO',  'PALMAS']
+lista_capitais = ["RIO BRANCO", "MACEIÓ", "MACAPÁ", "MANAUS", "SALVADOR", 'FORTALEZA', "BRASÍLIA", "VITÓRIA", 'GOIÂNIA',
+                  "SÃO LUÍS", "CUIABÁ", 'CAMPO GRANDE', 'BELO HORIZONTE', 'CURITIBA', 'JOÃO PESSOA', 'BELÉM', 'RECIFE',
+                  'TERESINA', 'NATAL', 'PORTO ALEGRE', 'RIO DE JANEIRO', 'PORTO VELHO', 'BOA VISTA', 'FLORIANÓPOLIS',
+                  'ARACAJU', 'SÃO PAULO', 'PALMAS']
 
 data = pd.DataFrame()
 tabela_rur = pd.DataFrame()
 tabela_urb = pd.DataFrame()
+
+log = 'log_' + str(date.today()) + '.txt'
+log = open(log, 'w')
+log.write('\n')
+
+tentativa = 0
 
 def seleciona_elementos(nome_unidade, nome_procurado):
     sleep(0.5)
@@ -55,48 +66,75 @@ def cria_lista(nome_elemento):
     find_el = conteudo_web.find("select", {"id": f"frm{nome_elemento}"}).get_text()
     return find_el.split('\n')
 
+
 # função p/ transformar em tabela
 def tabela(indice):
     sleep(0.5)
     element = navegador.find_element(By.XPATH, '//*[@id="resposta"]/table[{}]'.format(indice))
-    
+
     html_element = element.get_attribute('outerHTML')
 
     df_aux = pd.read_html(html_element.replace(',', '.'))
-    df_aux[0].drop([0,1], inplace=True)
+    df_aux[0].drop([0, 1], inplace=True)
 
     return df_aux[0]
- 
-tempo_inicial = time.time() # em segundos
+
+
+tempo_inicial = time.time()  # em segundos
 
 for e in range(0, 27):
-    for tentativa in range(3):
-        try:
-        # só vai procurar um estado, um município e um ano, dentro disso, vários conjuntos
-            seleciona_elementos("Estados", lista_estados[e])
-            seleciona_elementos("Municipios", lista_capitais[e])
-            seleciona_elementos("Anos", 2023)
-            qtd_conjuntos = atualiza_html_e_conta_options(0.5, 'Conjuntos')
+    # só vai procurar um estado, um município e um ano, dentro disso, vários conjuntos
+    seleciona_elementos("Estados", lista_estados[e])
+    sleep(1)
 
-            # se colocar a exceção aqui ele reclama que "qtd_conjuntos não está definida"
-            for c in range(2, qtd_conjuntos + 1):
+    try:
+        seleciona_elementos("Municipios", lista_capitais[e])
+        sleep(1)
 
-                lista_conjuntos = cria_lista('Conjuntos')
-                seleciona_elementos('Conjuntos', lista_conjuntos[c])
+        seleciona_elementos("Anos", 2022)
+        qtd_conjuntos = atualiza_html_e_conta_options(0.5, 'Conjuntos')
+        sleep(1)
 
-                tabela_urb = tabela_urb.append(tabela(1))
-                tabela_rur = tabela_urb.append(tabela(2))
+        # se colocar a exceção aqui ele reclama que "qtd_conjuntos não está definida"
 
-        except:
-                if tentativa == 3:
-                    print(str(f'Erro: {tentativa}º tentativa - {lista_capitais[e]}/{lista_estados[e]}'))
-                pass
+        for c in range(2, qtd_conjuntos + 1):
+            try:
+                for tentativas in range(1, 4):
+                    tentativa = tentativas
+                    # ['', 'Selecione um Conjunto Elétrico', 'SÃO FRANCISCO', 'TANGARÁ', 'TAQUARI', '']
+
+                    lista_conjuntos = cria_lista('Conjuntos')
+                    seleciona_elementos('Conjuntos', lista_conjuntos[c])
+
+                    df1 = tabela(0)
+                    df2 = tabela(1)
+
+                    df_urb = tabela_urb.append(df1, ignore_index=True)
+                    df_rur = tabela_rur.append(df2, ignore_index=True)
+
+                    log.write(str(f'OK: tentativa {tentativa} - {lista_conjuntos[c]}/{lista_estados[e]}'))
+                    print(f'OK: tentativa {tentativa} - {lista_conjuntos[c]}/{lista_estados[e]}')
+                    break
+
+            except:
+                if tentativa == 4:
+                    print(str(f'Erro: {lista_capitais[e]}/{lista_estados[e]}'))
+                    log.write(str(f'Erro: {lista_capitais[e]}/{lista_estados[e]}'))
+                    pass
+
+    except WebDriverException:
+        print(str(f'Erro: {lista_estados[e]}\n'))
+        log.write(str(f'Erro: tentativa {lista_estados[e]}\n'))
+        pass
+
 
 def exportar_tabelas():
-    if(tabela_urb.shape[1]) > 7:
-        tabela_urb.columns=['Conjunto', 'DEC', 'FEC', 'DIC A', 'DIC T', 'DIC M', 'FIC A', 'FIC T', 'FIC M', 'DMCI', 'DICRI']
-        tabela_rur.columns=['Conjunto', 'DEC', 'FEC', 'DIC A', 'DIC T', 'DIC M', 'FIC A', 'FIC T', 'FIC M', 'DMCI', 'DICRI']
-    else :
+    if (tabela_urb.shape[1]) > 7:
+        tabela_urb.columns = ['Conjunto', 'DEC', 'FEC', 'DIC A', 'DIC T', 'DIC M', 'FIC A', 'FIC T', 'FIC M', 'DMCI',
+                              'DICRI']
+        tabela_rur.columns = ['Conjunto', 'DEC', 'FEC', 'DIC A', 'DIC T', 'DIC M', 'FIC A', 'FIC T', 'FIC M', 'DMCI',
+                              'DICRI']
+    else:
         tabela_urb.columns = ['Conjunto', 'DEC', 'FEC', 'DIC M', 'FIC M', 'DMCI', 'DICRI']
         tabela_rur.columns = ['Conjunto', 'DEC', 'FEC', 'DIC M', 'FIC M', 'DMCI', 'DICRI']
 
@@ -104,7 +142,8 @@ def exportar_tabelas():
         tabela_urb.to_excel(writer, sheet_name='BT Urb', index=False)
         tabela_rur.to_excel(writer, sheet_name='BT Rur', index=False)
 
+
 exportar_tabelas()
-tempo_final = time.time() # em segundos
-print(f"\n--- Tempo de busca ---\nAproximadamente {round(tempo_final - tempo_inicial,1)} segundos")
+tempo_final = time.time()  # em segundos
+print(f"\n--- Tempo de busca ---\nAproximadamente {round(tempo_final - tempo_inicial, 1)} segundos")
 navegador.quit()
