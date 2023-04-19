@@ -1,3 +1,5 @@
+import random
+from datetime import date
 from time import sleep
 import ibge.localidades
 import pandas as pd
@@ -7,6 +9,7 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as ec
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.common.exceptions import WebDriverException
 
 # abre o navegador navegador
 navegador = webdriver.Chrome()
@@ -20,21 +23,35 @@ lista_estados = sorted(ibge.localidades.Estados().getNome())
 # coloca o vetor em upper case
 lista_estados = list(map(lambda x: x.upper(), lista_estados))
 
+# lista_capitais = ["RIO BRANCO", "MACEIÓ", "MACAPÁ", "MANAUS", "SALVADOR", 'FORTALEZA', "BRASÍLIA", "VITÓRIA", 'GOIÂNIA',
+                  #"SÃO LUÍS", "CUIABÁ", 'CAMPO GRANDE', 'BELO HORIZONTE', 'BELÉM', 'JOÃO PESSOA', 'CURITIBA', 'RECIFE',
+                  #'TERESINA', 'RIO DE JANEIRO', 'NATAL', 'PORTO ALEGRE', 'PORTO VELHO', 'BOA VISTA', 'FLORIANÓPOLIS',
+                  #'SÃO PAULO', 'ARACAJU', 'PALMAS']
+
 lista_capitais = ["RIO BRANCO", "MACEIÓ", "MACAPÁ", "MANAUS", "SALVADOR", 'FORTALEZA', "BRASÍLIA", "VITÓRIA", 'GOIÂNIA',
-                  "SÃO LUÍS", "CUIABÁ", 'CAMPO GRANDE', 'BELO HORIZONTE', 'BELÉM', 'JOÃO PESSOA', 'CURITIBA', 'RECIFE',
-                  'TERESINA', 'RIO DE JANEIRO', 'NATAL', 'PORTO ALEGRE', 'PORTO VELHO', 'BOA VISTA', 'FLORIANÓPOLIS',
-                  'SÃO PAULO', 'ARACAJU', 'PALMAS']
+                  "SÃO LUÍS", "CUIABÁ", 'CAMPO GRANDE', 'BELO HORIZONTE', 'CURITIBA', 'JOÃO PESSOA', 'BELÉM','RECIFE',
+                  'TERESINA', 'NATAL','PORTO ALEGRE', 'RIO DE JANEIRO', 'PORTO VELHO', 'BOA VISTA', 'FLORIANÓPOLIS',
+                  'ARACAJU','SÃO PAULO', 'PALMAS']
 
-lista_anos = [2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023]
+# lista_anos = [2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023]
+# lista_anos = [2022, 2023]
 
-dados_tabela = []
+tentativa = 0
+
+ids_gerados = []
+
 linhas_tabela = []
 
 df_urb = pd.DataFrame()
 df_rur = pd.DataFrame()
 
+log = 'log_' + str(date.today()) + '.txt'
+log = open(log, 'w')
+log.write('\n')
+
 
 def seleciona_elementos(nome_unidade, nome_procurado):
+    sleep(0.5)
     # o select só funciona com tag select, entaão seleciona a tag que contém as opcões de estados/municípios
     selecao = Select(navegador.find_element(By.XPATH, f'//*[@id="frm{nome_unidade}"]'))
 
@@ -49,10 +66,10 @@ def atualiza_html_e_conta_options(tempo_sleep, nome_elemento):
     sleep(tempo_sleep)
 
     conteudo_web = BeautifulSoup(navegador.page_source, 'html.parser')
-    lista_E = conteudo_web.find('select', {'id': f'frm{nome_elemento}'})
+    lista_e = conteudo_web.find('select', {'id': f'frm{nome_elemento}'})
 
     # conta abertura e fechamento de <option>, ficando valor dobrado
-    return int(len(lista_E) / 2)
+    return int(len(lista_e) / 2)
 
 
 def cria_lista(nome_elemento):
@@ -77,46 +94,115 @@ def tables(indice_table):
 
     # troca , por ponto e bota na horizontal
     df = pd.DataFrame(tabela).replace(',', '.', regex=True).transpose()
-    sleep(1)
+    sleep(0.5)
 
     return df
 
 
-for e in range(0, 1):
+def gerar_id():
+    id_aleatorio = random.randint(0, 100)
+
+    if id_aleatorio in ids_gerados:
+        while id_aleatorio in ids_gerados:
+            id_aleatorio = random.randint(0, 100)
+
+    ids_gerados.append(id_aleatorio)
+    return id_aleatorio
+
+""""
+PRA RJ DAR CERTO 
+AUMENTA TEMPO DE SELECT P 1.5
+for e in range(20, 21):
+    # só vai procurar um estado, um município e um ano, dentro disso, vários conjuntos
+    #seleciona_elementos("Estados", lista_estados[e])
+    selecao = Select(navegador.find_element(By.XPATH, f'//*[@id="frmEstados"]'))
+
+    # procura na página a option com o nome do estado/município
+    # busca = navegador.find_element(By.XPATH, f'//option[contains(text(),"RJ")]')
+
+    # seleciona (dentro da tag select) onde o texto é o encontrado na busca
+    selecao.select_by_value("RJ")
+    sleep(1)
+
     try:
-        seleciona_elementos("Estados", lista_estados[e])
+
+        a = Select(navegador.find_element(By.XPATH, f'//*[@id="frmMunicipios"]'))
+
+        # procura na página a option com o nome do estado/município
+        # busca = navegador.find_element(By.XPATH, f'//option[contains(text(),"RJ")]')
+
+        # seleciona (dentro da tag select) onde o texto é o encontrado na busca
+        a.select_by_value("3304557")
         sleep(1)
+"""
+
+for e in range(23, 24):
+    # só vai procurar um estado, um município e um ano, dentro disso, vários conjuntos
+    seleciona_elementos("Estados", lista_estados[e])
+    sleep(1)
+
+    try:
         seleciona_elementos("Municipios", lista_capitais[e])
-        sleep(2)
+        sleep(1)
 
-        for a in range(0, 4):
-            seleciona_elementos("Anos", lista_anos[a])
-            qtd_conjuntos = atualiza_html_e_conta_options(1.5, 'Conjuntos')
-            sleep(1)
+        seleciona_elementos("Anos", 2023)
+        qtd_conjuntos = atualiza_html_e_conta_options(0.5, 'Conjuntos')
+        sleep(1)
 
-            # ['', 'Selecione um Conjunto Elétrico', 'SÃO FRANCISCO', 'TANGARÁ', 'TAQUARI', '']
-            for c in range(2, qtd_conjuntos + 1):
-                lista_conjuntos = cria_lista('Conjuntos')
-                seleciona_elementos('Conjuntos', lista_conjuntos[c])
+        # se colocar a exceção aqui ele reclama que "qtd_conjuntos não está definida"
 
-                df1 = tables(0)
-                df2 = tables(1)
+        for c in range(2, qtd_conjuntos + 1):
+            try:
+                for tentativas in range(1, 4):
+                    tentativa = tentativas
+                    # ['', 'Selecione um Conjunto Elétrico', 'SÃO FRANCISCO', 'TANGARÁ', 'TAQUARI', '']
 
-                df_urb = df_urb.append(df1, ignore_index=True)
-                df_rur = df_rur.append(df2, ignore_index=True)
+                    lista_conjuntos = cria_lista('Conjuntos')
+                    seleciona_elementos('Conjuntos', lista_conjuntos[c])
 
-                linhas_tabela.append([lista_estados[e], lista_capitais[e], lista_anos[a]])
+                    df1 = tables(0)
+                    df2 = tables(1)
+
+                    df_urb = df_urb.append(df1, ignore_index=True)
+                    df_rur = df_rur.append(df2, ignore_index=True)
+
+                    linhas_tabela.append([lista_estados[e], lista_capitais[e], 2023])
+                    log.write(str(f'OK: tentativa {tentativa} - {lista_conjuntos[c]}/{lista_estados[e]}'))
+                    print(f'OK: tentativa {tentativa} - {lista_conjuntos[c]}/{lista_estados[e]}')
+                    break
+
+            except:
+                if tentativa == 4:
+                    print(str(f'Erro: {lista_capitais[e]}/{lista_estados[e]}'))
+                    log.write(str(f'Erro: {lista_capitais[e]}/{lista_estados[e]}'))
+                    pass
 
     except:
-        print("Erro")
+        print(str(f'Erro: {lista_estados[e]}\n'))
+        log.write(str(f'Erro: tentativa {lista_estados[e]}\n'))
         pass
 
-df_urb.columns = ['Conjunto', 'DEC', 'FEC', 'DIC A', 'DIC M', 'DIC T', 'FIC A', 'FIC M', 'FIC T', 'DMCI', 'DICRI']
-df_rur.columns = ['Conjunto', 'DEC', 'FEC', 'DIC A', 'DIC M', 'DIC T', 'FIC A', 'FIC M', 'FIC T', 'DMCI', 'DICRI']
+# precisa colocar para que ele escreva
+log.close()
 
-df_estmunanocon = pd.DataFrame(linhas_tabela, columns=['Estado', 'Município', 'Ano'])
+# se for de um ano com todas as informações
+# df_urb.columns = ['Conjunto', 'DEC', 'FEC', 'DIC A', 'DIC T', 'DIC M', 'FIC A', 'FIC T', 'FIC M', 'DMCI', 'DICRI']
+# df_rur.columns = ['Conjunto', 'DEC', 'FEC', 'DIC A', 'DIC T', 'DIC M', 'FIC A', 'FIC T', 'FIC M', 'DMCI', 'DICRI']
 
-m = pd.merge(df_estmunanocon, df_urb.astype(float), right_index=True, left_index=True, how='outer')
+# ano novo
+df_urb.columns = ['Conjunto', 'DEC', 'FEC', 'DIC M', 'FIC M', 'DMCI', 'DICRI']
+df_rur.columns = ['Conjunto', 'DEC', 'FEC', 'DIC M', 'FIC M', 'DMCI', 'DICRI']
 
-m.to_excel("testeconj.xlsx", sheet_name='Baixa Tensão Urbana', index=False)
+df_urb[['DEC', 'FEC', 'DIC M', 'FIC M', 'DMCI', 'DICRI']] = \
+df_urb[['DEC', 'FEC', 'DIC M', 'FIC M', 'DMCI', 'DICRI']].apply(pd.to_numeric)
+
+df_estmunano = pd.DataFrame(linhas_tabela, columns=['Estado', 'Município', 'Ano'])
+
+m = pd.merge(df_estmunano, df_urb, right_index=True, left_index=True, how='outer')
+n = pd.merge(df_estmunano, df_rur, right_index=True, left_index=True, how='outer')
+
+with pd.ExcelWriter('limite_conjuntos_' + str(gerar_id()) + '.xlsx') as writer:
+    m.to_excel(writer, sheet_name='BT Urb', index=False)
+    n.to_excel(writer, sheet_name='BT Rur', index=False)
+
 navegador.quit()
